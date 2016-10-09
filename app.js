@@ -1,18 +1,32 @@
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import { Scene, Router } from 'react-native-router-flux';
 import configureStore from './store/configureStore';
+import base from './base';
+import onboarding from './onboarding';
 
-const App = () => (
-  <Provider store={configureStore()}>
-    <View />
-  </Provider>
-);
+const store = configureStore();
 
-App.styles = StyleSheet.create({
-});
+class App extends Component {
+  componentDidMount() {
+    store.dispatch(base.actions.applicationStarted());
+  }
+
+  render() {
+    return (
+      <Provider store={store}>
+        <Router>
+          <Scene key="root">
+            <Scene
+              key={onboarding.constants.LOADING_SCENE_KEY}
+              component={onboarding.Loading}
+              initial
+            />
+          </Scene>
+        </Router>
+      </Provider>
+    );
+  }
+}
 
 export default App;

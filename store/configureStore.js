@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
+import onboarding from './../onboarding';
 
 const reducer = (state = {}) => state;
 
@@ -10,6 +11,8 @@ export default function configureStore() {
     reducer,
     applyMiddleware(sagaMiddleware)
   );
+
+  sagaMiddleware.run(onboarding.saga);
 
   return store;
 }
