@@ -1,14 +1,14 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import onboarding from './../onboarding';
-
-const reducer = (state = {}) => state;
 
 export default function configureStore() {
   const sagaMiddleware = createSagaMiddleware();
 
   const store = createStore(
-    reducer,
+    combineReducers({
+      [onboarding.constants.NAME]: onboarding.reducer,
+    }),
     applyMiddleware(sagaMiddleware)
   );
 
