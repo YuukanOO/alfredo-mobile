@@ -7,6 +7,11 @@ import onboarding from './onboarding';
 
 const store = configureStore();
 
+// Additional scene props for each scene component.
+const sceneProps = {
+  panHandlers: null,
+};
+
 class App extends Component {
   componentDidMount() {
     store.dispatch(base.actions.applicationStarted());
@@ -21,6 +26,17 @@ class App extends Component {
               key={onboarding.constants.LOADING_SCENE_KEY}
               component={onboarding.Loading}
               initial
+              {...sceneProps}
+            />
+            <Scene
+              key={onboarding.constants.ONBOARDING_HOME_SCENE_KEY}
+              component={onboarding.OnboardingHome}
+              {...sceneProps}
+            />
+            <Scene
+              key={onboarding.constants.ONBOARDING_SERVER_SCENE_KEY}
+              component={onboarding.OnboardingServer}
+              {...sceneProps}
             />
           </Scene>
         </Router>
