@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { reducer as formReducer } from 'redux-form';
 import { composeWithDevTools } from 'remote-redux-devtools';
 import onboarding from './../onboarding';
+import house from './../house';
 import base from './../base';
 
 export default function configureStore() {
@@ -12,12 +13,14 @@ export default function configureStore() {
   const store = createStore(
     combineReducers({
       [onboarding.constants.NAME]: onboarding.reducer,
+      [house.constants.NAME]: house.reducer,
       form: formReducer,
     }),
     composeEnhancers(applyMiddleware(sagaMiddleware))
   );
 
   sagaMiddleware.run(onboarding.saga);
+  sagaMiddleware.run(house.saga);
   sagaMiddleware.run(base.saga);
 
   return store;

@@ -12,6 +12,7 @@ function* onAppStarted() {
     yield call(Actions[constants.ONBOARDING_HOME_SCENE_KEY], { type: ActionConst.RESET });
   } else {
     // TODO redirect to home page
+    yield call(Actions[constants.ONBOARDING_HOME_SCENE_KEY], { type: ActionConst.RESET });
   }
 }
 

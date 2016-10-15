@@ -3,9 +3,9 @@ import { View, Text } from 'react-native';
 import { MKTextField, MKProgress } from 'react-native-material-kit';
 import { Field, reduxForm } from 'redux-form';
 import base from './../../base';
+import house from './../../house';
 import OnboardingHome from './OnboardingHome';
 import * as constants from './../constants';
-import * as actions from './../actions';
 
 const { Spacer, Button, colors } = base;
 
@@ -14,7 +14,6 @@ const description = 'Commencez par rentrer l\'adresse du serveur';
 const ServerTextField = field => (
   <MKTextField
     placeholder="192.168.0.15"
-    keyboardType="numeric"
     underlineColorAndroid="transparent"
     textInputStyle={OnboardingHome.styles.TextInput}
     highlightColor={colors.primaryColor}
@@ -57,7 +56,7 @@ OnboardingServer.propTypes = {
 
 const ConnectedOnboardingServer = reduxForm({
   form: constants.ONBOARDING_SERVER_FORM_NAME,
-  onSubmit: (args, dispatch) => actions.connectToServer.request(args, dispatch),
+  onSubmit: (args, dispatch) => dispatch(house.actions.connectToServer.submit(args)),
 })(OnboardingServer);
 
 ConnectedOnboardingServer.renderNavigationBar = () => <View />;

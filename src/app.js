@@ -4,6 +4,7 @@ import { Scene, Router } from 'react-native-router-flux';
 import configureStore from './store/configureStore';
 import base from './base';
 import onboarding from './onboarding';
+import house from './house';
 
 const store = configureStore();
 
@@ -44,5 +45,11 @@ class App extends Component {
     );
   }
 }
+
+// <Scene
+//               key={house.constants.ROOMS_SCENE_KEY}
+//               component={house.Rooms}
+//               {...sceneProps}
+//             />
 
 export default App;

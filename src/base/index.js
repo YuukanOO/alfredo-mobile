@@ -4,6 +4,7 @@ import * as actionTypes from './actionTypes';
 import * as colors from './colors';
 import * as types from './types';
 import * as storage from './storage';
+import * as fetch from './fetch';
 import saga from './sagas';
 import components from './components';
 
@@ -12,6 +13,7 @@ export default {
   actionTypes,
   ...components,
   constants,
+  fetch,
   colors,
   types,
   storage,
