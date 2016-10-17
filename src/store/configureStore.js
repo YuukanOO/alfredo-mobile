@@ -12,7 +12,6 @@ export default function configureStore() {
 
   const store = createStore(
     combineReducers({
-      [onboarding.constants.NAME]: onboarding.reducer,
       [house.constants.NAME]: house.reducer,
       form: formReducer,
     }),

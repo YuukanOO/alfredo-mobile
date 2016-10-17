@@ -35,7 +35,7 @@ const OnboardingServer = ({ handleSubmit, submitting }) => (
     <View style={OnboardingHome.styles.Content}>
       <Text style={OnboardingHome.styles.Title}>Serveur</Text>
       <Text style={OnboardingHome.styles.Description}>{description}</Text>
-      <Field name="serverAddress" component={ServerTextField} />
+      <Field name="host" component={ServerTextField} />
     </View>
 
     <Spacer />

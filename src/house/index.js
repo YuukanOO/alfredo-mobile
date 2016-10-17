@@ -2,7 +2,8 @@ import reducer from './reducer';
 import * as constants from './constants';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
-import * as components from './components';
+import * as selectors from './selectors';
+import components from './components';
 import saga from './sagas';
 
 export default {
@@ -12,4 +13,5 @@ export default {
   constants,
   reducer,
   saga,
+  selectors,
 };

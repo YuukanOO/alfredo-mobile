@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { Scene, Router } from 'react-native-router-flux';
 import configureStore from './store/configureStore';
 import base from './base';
@@ -19,37 +19,42 @@ class App extends Component {
   }
 
   render() {
+    const RouterWithRedux = connect()(Router);
+
     return (
-      <Provider store={store}>
-        <Router>
-          <Scene key="root">
-            <Scene
-              key={onboarding.constants.LOADING_SCENE_KEY}
-              component={onboarding.Loading}
-              initial
-              {...sceneProps}
-            />
-            <Scene
-              key={onboarding.constants.ONBOARDING_HOME_SCENE_KEY}
-              component={onboarding.OnboardingHome}
-              {...sceneProps}
-            />
-            <Scene
-              key={onboarding.constants.ONBOARDING_SERVER_SCENE_KEY}
-              component={onboarding.OnboardingServer}
-              {...sceneProps}
-            />
-          </Scene>
-        </Router>
-      </Provider>
+      <RouterWithRedux>
+        <Scene key="root">
+          <Scene
+            key={onboarding.constants.LOADING_SCENE_KEY}
+            component={onboarding.Loading}
+            initial
+            {...sceneProps}
+          />
+          <Scene
+            key={onboarding.constants.ONBOARDING_HOME_SCENE_KEY}
+            component={onboarding.OnboardingHome}
+            {...sceneProps}
+          />
+          <Scene
+            key={onboarding.constants.ONBOARDING_SERVER_SCENE_KEY}
+            component={onboarding.OnboardingServer}
+            {...sceneProps}
+          />
+          <Scene
+            key={house.constants.ROOMS_SCENE_KEY}
+            component={house.Rooms}
+            {...sceneProps}
+          />
+        </Scene>
+      </RouterWithRedux>
     );
   }
 }
 
-// <Scene
-//               key={house.constants.ROOMS_SCENE_KEY}
-//               component={house.Rooms}
-//               {...sceneProps}
-//             />
+const Root = () => (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
 
-export default App;
+export default Root;
