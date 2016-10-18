@@ -5,7 +5,6 @@ import { Field, reduxForm } from 'redux-form';
 import base from './../../base';
 import house from './../../house';
 import OnboardingHome from './OnboardingHome';
-import * as constants from './../constants';
 
 const { Spacer, Button, colors } = base;
 
@@ -13,7 +12,7 @@ const description = 'Commencez par rentrer l\'adresse du serveur';
 
 const ServerTextField = field => (
   <MKTextField
-    placeholder="192.168.0.15"
+    placeholder="192.168.0.15:8080"
     underlineColorAndroid="transparent"
     textInputStyle={OnboardingHome.styles.TextInput}
     highlightColor={colors.primaryColor}
@@ -22,7 +21,7 @@ const ServerTextField = field => (
   />
 );
 
-const OnboardingServer = ({ handleSubmit, submitting }) => (
+const OnboardingServer = ({ handleSubmit, submitting, valid }) => (
   <View style={OnboardingHome.styles.Container}>
     {submitting ?
       <MKProgress.Indeterminate
@@ -42,7 +41,7 @@ const OnboardingServer = ({ handleSubmit, submitting }) => (
 
     <Button
       text="Connexion"
-      disabled={submitting}
+      disabled={!valid || submitting}
       onPress={handleSubmit}
       style={{ container: OnboardingHome.styles.Button }}
     />
@@ -52,10 +51,12 @@ const OnboardingServer = ({ handleSubmit, submitting }) => (
 OnboardingServer.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  valid: PropTypes.bool.isRequired,
 };
 
 const ConnectedOnboardingServer = reduxForm({
-  form: constants.ONBOARDING_SERVER_FORM_NAME,
+  form: house.actions.connectToServer.formName,
+  validate: values => (values.host ? {} : { host: 'requis' }),
   onSubmit: (args, dispatch) => dispatch(house.actions.connectToServer.submit(args)),
 })(OnboardingServer);
 

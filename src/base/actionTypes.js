@@ -11,3 +11,4 @@ export const createActionTypes = actionType => ({
 
 export const FORM_START_SUBMIT = `${NAME}/FORM_START_SUBMIT`;
 export const APP_STARTED = `${NAME}/APP_STARTED`;
+export const SET_STATUS_BAR = `${NAME}/SET_STATUS_BAR`;

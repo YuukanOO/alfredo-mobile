@@ -13,6 +13,7 @@ export default function configureStore() {
   const store = createStore(
     combineReducers({
       [house.constants.NAME]: house.reducer,
+      [base.constants.NAME]: base.reducer,
       form: formReducer,
     }),
     composeEnhancers(applyMiddleware(sagaMiddleware))

@@ -22,3 +22,15 @@ export const post = (endpoint, data) => remote(endpoint, {
   ...data,
   method: 'POST',
 });
+export const put = (endpoint, data) => remote(endpoint, {
+  ...data,
+  method: 'PUT',
+});
+export const del = (endpoint, data) => remote(endpoint, {
+  ...data,
+  method: 'DELETE',
+});
+export const patch = (endpoint, data) => remote(endpoint, {
+  ...data,
+  method: 'PATCH',
+});

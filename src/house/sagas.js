@@ -8,10 +8,35 @@ import * as selectors from './selectors';
 import * as t from './actionTypes';
 
 /**
+ * Synchronize every aspect of the house: Rooms, Devices and Adapters.
+ */
+function* sync() {
+  const server = selectors.getServerInfo(yield select());
+
+  try {
+    const host = `http://${server.local}`;
+    const opts = { headers: { Authorization: `Bearer ${server.token}` } };
+
+    const adapters = yield call(base.fetch.get, `${host}/adapters`, opts);
+    yield put(actions.fetchAdapters.success(adapters));
+
+    const rooms = yield call(base.fetch.get, `${host}/rooms`, opts);
+    yield put(actions.fetchRooms.success(rooms));
+
+    const devices = yield call(base.fetch.get, `${host}/devices`, opts);
+    yield put(actions.fetchDevices.success(devices));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/**
  * Upon connection, save the server information to the persistent storage and
  * redirect the user to the home page.
  */
 function* onConnectedToServer({ payload }) {
+  yield sync();
+
   yield call(base.storage.setItem, constants.SERVER_STORAGE_KEY, payload);
   yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
 }
@@ -42,6 +67,7 @@ function* onConnectToServer({ payload: { host } }) {
         },
       },
     );
+
     yield put(actions.connectToServer.success({
       ...serverInfo,
       token,
