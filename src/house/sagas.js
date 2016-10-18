@@ -23,6 +23,10 @@ function* sync() {
     const rooms = yield call(base.fetch.get, `${host}/rooms`, opts);
     yield put(actions.fetchRooms.success(rooms));
 
+    if (rooms.length === 0) {
+      yield put(actions.addDraftRoom());
+    }
+
     const devices = yield call(base.fetch.get, `${host}/devices`, opts);
     yield put(actions.fetchDevices.success(devices));
   } catch (e) {
@@ -39,6 +43,7 @@ function* onConnectedToServer({ payload }) {
 
   yield call(base.storage.setItem, constants.SERVER_STORAGE_KEY, payload);
   yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
+  yield put(base.actions.setStatusbar({ backgroundColor: 'transparent' }));
 }
 
 /**
@@ -61,11 +66,7 @@ function* onConnectToServer({ payload: { host } }) {
 
     const serverInfo = yield call(
       base.fetch.get, `http://${host}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
+      server.body(),
     );
 
     yield put(actions.connectToServer.success({
@@ -77,9 +78,33 @@ function* onConnectToServer({ payload: { host } }) {
   }
 }
 
+function* onRoomUpdated() {
+  try {
+    const state = yield select();
+    const server = selectors.getServerInfo(state);
+    const room = selectors.getCurrentRoom(state);
+
+    if (room.id === constants.DRAFT_ROOM_ID) {
+      // We need to update the draft room given our new one now!
+      yield put(actions.draftRoomSaved(yield call(
+        base.fetch.post, `http://${server.local}/rooms`,
+        server.body(room)
+      )));
+    } else {
+      yield put(actions.updateRoom.success(yield call(
+        base.fetch.put, `http://${server.local}/rooms/${room.id}`,
+        server.body(room)
+      )));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export default function* rootSaga() {
   yield [
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
     takeLatest(t.CONNECT_TO_SERVER.SUCCESS, onConnectedToServer),
+    takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
   ];
 }

@@ -3,7 +3,6 @@ import * as t from './actionTypes';
 const initialState = {
   statusbar: {
     translucent: true,
-    backgroundColor: 'transparent',
     barStyle: 'light-content',
   },
 };

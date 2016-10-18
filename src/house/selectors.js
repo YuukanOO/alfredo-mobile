@@ -1,7 +1,15 @@
 import { createSelector } from 'reselect';
 import { NAME } from './constants';
 
-export const getServerInfo = state => state[NAME].server || {};
+export const getServerInfo = state => ({
+  ...state[NAME].server || {},
+  body: data => ({
+    headers: {
+      Authorization: `Bearer ${state[NAME].server.token}`,
+    },
+    body: data,
+  }),
+});
 export const getRooms = state => state[NAME].rooms;
 export const getRoomsArray = createSelector(getRooms, rooms => Object.values(rooms));
 export const getDevices = state => state[NAME].devices;

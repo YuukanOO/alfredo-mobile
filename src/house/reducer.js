@@ -1,4 +1,5 @@
 import * as t from './actionTypes';
+import * as constants from './constants';
 
 const initialState = {
   server: {
@@ -21,8 +22,8 @@ export default function houseReducer(state = initialState, action) {
     case t.FETCH_ROOMS.SUCCESS:
       return {
         ...state,
+        currentRoom: (action.payload.length > 0 ? action.payload[0].id : null),
         rooms: action.payload.reduce((prev, cur) => ({ ...prev, [cur.id]: cur }), {}),
-        currentRoom: action.payload.length > 0 ? action.payload[0].id : null,
       };
     case t.FETCH_DEVICES.SUCCESS:
       return {
@@ -36,6 +37,59 @@ export default function houseReducer(state = initialState, action) {
       };
     case t.SET_CURRENT_ROOM:
       return { ...state, currentRoom: action.payload };
+    case t.SET_EDIT_ROOM:
+      return {
+        ...state,
+        rooms: {
+          ...state.rooms,
+          [action.id]: {
+            ...state.rooms[action.id],
+            editing: action.payload,
+          },
+        },
+      };
+    case t.ADD_DRAFT_ROOM:
+      return {
+        ...state,
+        currentRoom: constants.DRAFT_ROOM_ID,
+        rooms: {
+          ...state.rooms,
+          [constants.DRAFT_ROOM_ID]: { id: constants.DRAFT_ROOM_ID, name: 'draft', editing: true },
+        },
+      };
+    case t.CHANGE_ROOM:
+      return {
+        ...state,
+        rooms: {
+          ...state.rooms,
+          [action.id]: {
+            ...state.rooms[action.id],
+            ...action.payload,
+          },
+        },
+      };
+    case t.DRAFT_ROOM_SAVED: // eslint-disable-line no-case-declarations
+      const oldRooms = state.rooms;
+      delete oldRooms[constants.DRAFT_ROOM_ID];
+      return {
+        ...state,
+        currentRoom: action.payload.id,
+        rooms: {
+          ...oldRooms,
+          [action.payload.id]: action.payload,
+        },
+      };
+    case t.UPDATE_ROOM.SUCCESS:
+      return {
+        ...state,
+        rooms: {
+          ...state.rooms,
+          [action.payload.id]: {
+            ...state.rooms[action.payload.id],
+            ...action.payload,
+          },
+        },
+      };
     default:
       return state;
   }

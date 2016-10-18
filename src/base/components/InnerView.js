@@ -3,8 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import Navbar from './Navbar';
 import Statusbar from './Statusbar';
 
-const InnerView = ({ children, ...props }) => (
-  <View style={InnerView.styles.Container} {...props}>
+const InnerView = ({ children, style, ...props }) => (
+  <View style={[InnerView.styles.Container, style]} {...props}>
     {children}
   </View>
 );
@@ -14,6 +14,7 @@ InnerView.propTypes = {
     PropTypes.arrayOf(React.PropTypes.element),
     PropTypes.element,
   ]),
+  style: PropTypes.any,
 };
 
 InnerView.styles = StyleSheet.create({
