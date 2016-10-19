@@ -8,6 +8,7 @@ const initialState = {
     version: null,
     token: null,
   },
+  editing: false,
   currentRoom: null,
   rooms: {},
   devices: {},
