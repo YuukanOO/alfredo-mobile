@@ -15,7 +15,7 @@ function* sync() {
 
   try {
     const host = server.local;
-    const opts = { headers: { Authorization: `Bearer ${server.token}` } };
+    const opts = server.body();
 
     const adapters = yield call(base.fetch.get, `${host}/adapters`, opts);
     yield put(actions.fetchAdapters.success(adapters));

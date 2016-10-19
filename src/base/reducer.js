@@ -4,7 +4,7 @@ import * as colors from './colors';
 const initialState = {
   statusbar: {
     translucent: true,
-    backgroundColor: colors.primaryColor,
+    backgroundColor: colors.primaryColorDark,
     barStyle: 'light-content',
   },
 };
