@@ -14,7 +14,7 @@ function* sync() {
   const server = selectors.getServerInfo(yield select());
 
   try {
-    const host = `http://${server.local}`;
+    const host = server.local;
     const opts = { headers: { Authorization: `Bearer ${server.token}` } };
 
     const adapters = yield call(base.fetch.get, `${host}/adapters`, opts);
@@ -35,13 +35,21 @@ function* sync() {
 }
 
 /**
+ * Upon controller registration, persist server informations.
+ */
+function* onControllerRegistered() {
+  yield call(base.storage.setItem, constants.SERVER_STORAGE_KEY,
+    selectors.getRawServerInfo(yield select()));
+}
+
+/**
  * Upon connection, save the server information to the persistent storage and
  * redirect the user to the home page.
  */
-function* onConnectedToServer({ payload }) {
+function* onConnectedToServer() {
   yield sync();
+  yield onControllerRegistered();
 
-  yield call(base.storage.setItem, constants.SERVER_STORAGE_KEY, payload);
   yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
   yield put(base.actions.setStatusbar({ backgroundColor: 'transparent' }));
 }
@@ -53,26 +61,28 @@ function* onConnectedToServer({ payload }) {
  */
 function* onConnectToServer({ payload: { host } }) {
   try {
-    const server = selectors.getServerInfo(yield select());
+    let server = selectors.getServerInfo(yield select());
     let token = server.token;
 
     // If no token could be retrieved, generates a new one
     if (!token) {
       token = yield call(
-        base.fetch.post, `http://${host}/controllers`,
+        base.fetch.post, `${host}/controllers`,
         { body: { uid: 'dev' } },
       );
+
+      // Sets the token and refresh the server object use to query subsequent resources
+      yield put(actions.registerController.success(token));
+
+      server = selectors.getServerInfo(yield select());
     }
 
     const serverInfo = yield call(
-      base.fetch.get, `http://${host}`,
+      base.fetch.get, host,
       server.body(),
     );
 
-    yield put(actions.connectToServer.success({
-      ...serverInfo,
-      token,
-    }));
+    yield put(actions.connectToServer.success(serverInfo));
   } catch (e) {
     yield put(actions.connectToServer.failure(e));
   }
@@ -87,12 +97,12 @@ function* onRoomUpdated() {
     if (room.id === constants.DRAFT_ROOM_ID) {
       // We need to update the draft room given our new one now!
       yield put(actions.draftRoomSaved(yield call(
-        base.fetch.post, `http://${server.local}/rooms`,
+        base.fetch.post, `${server.local}/rooms`,
         server.body(room)
       )));
     } else {
       yield put(actions.updateRoom.success(yield call(
-        base.fetch.put, `http://${server.local}/rooms/${room.id}`,
+        base.fetch.put, `${server.local}/rooms/${room.id}`,
         server.body(room)
       )));
     }
@@ -106,5 +116,6 @@ export default function* rootSaga() {
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
     takeLatest(t.CONNECT_TO_SERVER.SUCCESS, onConnectedToServer),
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
+    takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
   ];
 }

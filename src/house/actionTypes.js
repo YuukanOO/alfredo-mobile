@@ -12,3 +12,4 @@ export const CHANGE_ROOM = `${NAME}/CHANGE_ROOM`;
 export const UPDATE_ROOM = base.actionTypes.createActionTypes(`${NAME}/UPDATE_ROOM`);
 export const DRAFT_ROOM_SAVED = `${NAME}/DRAFT_ROOM_SAVED`;
 export const SET_EDIT_ROOM = `${NAME}/SET_EDIT_ROOM`;
+export const REGISTER_CONTROLLER = base.actionTypes.createActionTypes(`${NAME}/REGISTER_CONTROLLER`);

@@ -1,8 +1,10 @@
 import * as t from './actionTypes';
+import * as colors from './colors';
 
 const initialState = {
   statusbar: {
     translucent: true,
+    backgroundColor: colors.primaryColor,
     barStyle: 'light-content',
   },
 };

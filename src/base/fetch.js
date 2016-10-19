@@ -7,6 +7,11 @@ const defaultOpts = {
 };
 
 function remote(endpoint, options = defaultOpts) {
+  /* global __DEV__ */
+  if (__DEV__) {
+    console.info(options.method || defaultOpts.method, endpoint, options);
+  }
+
   return fetch(endpoint, {
     ...options,
     headers: {
