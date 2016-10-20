@@ -11,7 +11,7 @@ const { Navbar } = base;
 
 /* eslint-disable global-require */
 
-const Rooms = ({ rooms, dispatch }) => (
+const Rooms = ({ rooms, devices, editing, dispatch }) => (
   <View style={Rooms.styles.Container}>
     <Image source={require('./../../../img/bg3.jpg')} style={Rooms.styles.BackgroundImage} />
     <ViewPagerAndroid
@@ -20,14 +20,25 @@ const Rooms = ({ rooms, dispatch }) => (
         dispatch(actions.setCurrentRoom(rooms[event.nativeEvent.position].id))}
       initialPage={0}
     >
-      {rooms.map(o => <View key={o.id}><Room room={o} dispatch={dispatch} /></View>)}
+      {rooms.map(o => (
+        <View key={o.id}>
+          <Room
+            room={o}
+            dispatch={dispatch}
+            devices={devices.filter(d => d.room_id === o.id)}
+            editing={editing}
+          />
+        </View>
+      ))}
     </ViewPagerAndroid>
   </View>
 );
 
 Rooms.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  editing: PropTypes.bool,
   rooms: PropTypes.array,
+  devices: PropTypes.array,
 };
 
 Rooms.styles = StyleSheet.create({
@@ -49,7 +60,10 @@ Rooms.styles = StyleSheet.create({
   },
 });
 
-const RoomsNavbar = ({ room: { id, editing }, dispatch }) => (
+const RoomsNavbar = ({
+  editing,
+  dispatch,
+}) => (
   <Navbar
     actions={(editing === true) ?
     [
@@ -57,7 +71,7 @@ const RoomsNavbar = ({ room: { id, editing }, dispatch }) => (
         title: 'Terminer',
         iconName: 'check',
         show: 'always',
-        onPress: () => dispatch(actions.setEditRoom(id, false)),
+        onPress: () => dispatch(actions.setEditRooms(false)),
       },
     ]
     : [
@@ -65,7 +79,7 @@ const RoomsNavbar = ({ room: { id, editing }, dispatch }) => (
         title: 'Editer',
         iconName: 'edit',
         show: 'always',
-        onPress: () => dispatch(actions.setEditRoom(id, true)),
+        onPress: () => dispatch(actions.setEditRooms(true)),
       },
     ]}
   />
@@ -73,18 +87,17 @@ const RoomsNavbar = ({ room: { id, editing }, dispatch }) => (
 
 RoomsNavbar.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  room: PropTypes.shape({
-    id: PropTypes.string,
-    editing: PropTypes.bool,
-  }),
+  editing: PropTypes.bool,
 };
 
 const ConnectedRoomsNavbar = connect(createStructuredSelector({
-  room: selectors.getCurrentRoom,
+  editing: selectors.getEditing,
 }))(RoomsNavbar);
 
 Rooms.renderNavigationBar = () => <ConnectedRoomsNavbar />;
 
 export default connect(createStructuredSelector({
   rooms: selectors.getRoomsArray,
+  devices: selectors.getDevicesArray,
+  editing: selectors.getEditing,
 }))(Rooms);

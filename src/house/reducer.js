@@ -52,17 +52,8 @@ export default function houseReducer(state = initialState, action) {
       };
     case t.SET_CURRENT_ROOM:
       return { ...state, currentRoom: action.payload };
-    case t.SET_EDIT_ROOM:
-      return {
-        ...state,
-        rooms: {
-          ...state.rooms,
-          [action.id]: {
-            ...state.rooms[action.id],
-            editing: action.payload,
-          },
-        },
-      };
+    case t.SET_EDIT_ROOMS:
+      return { ...state, editing: action.payload };
     case t.ADD_DRAFT_ROOM:
       return {
         ...state,

@@ -14,20 +14,17 @@ function* sync() {
   const server = selectors.getServerInfo(yield select());
 
   try {
-    const host = server.local;
-    const opts = server.body();
-
-    const adapters = yield call(base.fetch.get, `${host}/adapters`, opts);
+    const adapters = yield call(base.fetch.get, ...server.request('adapters'));
     yield put(actions.fetchAdapters.success(adapters));
 
-    const rooms = yield call(base.fetch.get, `${host}/rooms`, opts);
+    const rooms = yield call(base.fetch.get, ...server.request('rooms'));
     yield put(actions.fetchRooms.success(rooms));
 
     if (rooms.length === 0) {
       yield put(actions.addDraftRoom());
     }
 
-    const devices = yield call(base.fetch.get, `${host}/devices`, opts);
+    const devices = yield call(base.fetch.get, ...server.request('devices'));
     yield put(actions.fetchDevices.success(devices));
   } catch (e) {
     console.error(e);
@@ -78,8 +75,7 @@ function* onConnectToServer({ payload: { host } }) {
     }
 
     const serverInfo = yield call(
-      base.fetch.get, host,
-      server.body(),
+      base.fetch.get, ...server.request(),
     );
 
     yield put(actions.connectToServer.success(serverInfo));
@@ -97,13 +93,11 @@ function* onRoomUpdated() {
     if (room.id === constants.DRAFT_ROOM_ID) {
       // We need to update the draft room given our new one now!
       yield put(actions.draftRoomSaved(yield call(
-        base.fetch.post, `${server.local}/rooms`,
-        server.body(room)
+        base.fetch.post, ...server.request('rooms', room)
       )));
     } else {
       yield put(actions.updateRoom.success(yield call(
-        base.fetch.put, `${server.local}/rooms/${room.id}`,
-        server.body(room)
+        base.fetch.put, ...server.request(`rooms/${room.id}`, room)
       )));
     }
   } catch (e) {

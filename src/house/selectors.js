@@ -6,7 +6,7 @@ export const getServerInfo = createSelector(
   getRawServerInfo,
   serverInfo => ({
     ...serverInfo,
-    request: (path, body) => [
+    request: (path = '', body) => [
       `${serverInfo.local}/${path}`,
       {
         headers: {
@@ -20,6 +20,7 @@ export const getServerInfo = createSelector(
 export const getRooms = state => state[NAME].rooms;
 export const getRoomsArray = createSelector(getRooms, rooms => Object.values(rooms));
 export const getDevices = state => state[NAME].devices;
+export const getDevicesArray = createSelector(getDevices, devices => Object.values(devices));
 export const getAdapters = state => state[NAME].adapters;
 export const getEditing = state => state[NAME].editing;
 export const getCurrentRoom = createSelector(

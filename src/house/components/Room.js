@@ -1,17 +1,20 @@
 import React, { PropTypes } from 'react';
 import { MKTextField } from 'react-native-material-kit';
-import { Text, StyleSheet, TextInput } from 'react-native';
+import { Text, StyleSheet, Dimensions } from 'react-native';
 import base from './../../base';
 import * as actions from './../actions';
 
-const { InnerView, types } = base;
+const { InnerView, types, colors } = base;
+
+const noDevicesDescription = 'Vous n\'avez aucun accessoire dans cette pièce pour le moment. Passez en mode édition pour en ajouter !';
 
 const Room = ({
   room: {
     id,
     name,
-    editing,
   },
+  devices,
+  editing,
   dispatch,
 }) => (
   <InnerView style={Room.styles.Container}>
@@ -25,16 +28,21 @@ const Room = ({
       onSubmitEditing={() => dispatch(actions.updateRoom.request(id))}
       editable={editing === true}
     />
+    <Text style={Room.styles.SectionLabel}>Accessoires</Text>
+    {devices.length === 0 ?
+      <Text style={Room.styles.SectionText}>{noDevicesDescription}</Text>
+    : null}
   </InnerView>
 );
 
 Room.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  devices: PropTypes.array,
   room: PropTypes.shape({
-    editing: PropTypes.bool,
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
+  editing: PropTypes.bool,
 };
 
 Room.styles = StyleSheet.create({
@@ -43,10 +51,21 @@ Room.styles = StyleSheet.create({
     marginRight: 16,
   },
   Name: {
-    color: '#ffffff',
+    color: colors.primaryTextOnDarkColor,
     fontSize: types.titleFontSize,
     fontWeight: 'bold',
     height: 42,
+  },
+  SectionLabel: {
+    color: colors.primaryTextOnDarkColor,
+    fontSize: types.bodyFontSize,
+    marginBottom: 16,
+    marginTop: (Dimensions.get('window').height * 0.1),
+    fontWeight: 'bold',
+  },
+  SectionText: {
+    color: colors.secondaryTextOnDarkColor,
+    fontSize: types.bodyFontSize,
   },
 });
 
