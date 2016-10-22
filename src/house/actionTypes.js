@@ -13,3 +13,4 @@ export const UPDATE_ROOM = base.actionTypes.createActionTypes(`${NAME}/UPDATE_RO
 export const DRAFT_ROOM_SAVED = `${NAME}/DRAFT_ROOM_SAVED`;
 export const SET_EDIT_ROOMS = `${NAME}/SET_EDIT_ROOMS`;
 export const REGISTER_CONTROLLER = base.actionTypes.createActionTypes(`${NAME}/REGISTER_CONTROLLER`);
+export const GO_TO_ADAPTERS_CATEGORIES = `${NAME}/GO_TO_ADAPTERS_CATEGORIES`;

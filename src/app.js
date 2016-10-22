@@ -49,6 +49,11 @@ class App extends Component {
               component={house.Rooms}
               {...sceneProps}
             />
+            <Scene
+              key={house.constants.CATEGORIES_SCENE_KEY}
+              component={house.Categories}
+              {...sceneProps}
+            />
           </Scene>
         </RouterWithRedux>
       </View>

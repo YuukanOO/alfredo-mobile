@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { View, StyleSheet, ViewPagerAndroid, Image } from 'react-native';
@@ -11,31 +11,44 @@ const { Navbar } = base;
 
 /* eslint-disable global-require */
 
-const Rooms = ({ rooms, devices, editing, dispatch }) => (
-  <View style={Rooms.styles.Container}>
-    <Image source={require('./../../../img/bg3.jpg')} style={Rooms.styles.BackgroundImage} />
-    <ViewPagerAndroid
-      style={Rooms.styles.Container}
-      onPageSelected={event =>
-        dispatch(actions.setCurrentRoom(rooms[event.nativeEvent.position].id))}
-      initialPage={0}
-    >
-      {rooms.map(o => (
-        <View key={o.id}>
-          <Room
-            room={o}
-            dispatch={dispatch}
-            devices={devices.filter(d => d.room_id === o.id)}
-            editing={editing}
-          />
-        </View>
-      ))}
-    </ViewPagerAndroid>
-  </View>
-);
+class Rooms extends Component {
+
+  componentDidUpdate() {
+    this.pager.setPage(this.props.rooms.indexOf(this.props.currentRoom));
+  }
+
+  render() {
+    const { rooms, devices, editing, dispatch } = this.props;
+    /* eslint-disable no-return-assign */
+    return (
+      <View style={Rooms.styles.Container}>
+        <Image source={require('./../../../img/bg3.jpg')} style={Rooms.styles.BackgroundImage} />
+        <ViewPagerAndroid
+          ref={o => this.pager = o}
+          style={Rooms.styles.Container}
+          onPageSelected={event =>
+            dispatch(actions.setCurrentRoom(rooms[event.nativeEvent.position].id))}
+          initialPage={0}
+        >
+          {rooms.map(o => (
+            <View key={o.id}>
+              <Room
+                room={o}
+                dispatch={dispatch}
+                devices={devices.filter(d => d.room_id === o.id)}
+                editing={editing}
+              />
+            </View>
+          ))}
+        </ViewPagerAndroid>
+      </View>
+      );
+  }
+}
 
 Rooms.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  currentRoom: PropTypes.object,
   editing: PropTypes.bool,
   rooms: PropTypes.array,
   devices: PropTypes.array,
@@ -65,7 +78,14 @@ const RoomsNavbar = ({
   dispatch,
 }) => (
   <Navbar
-    actions={(editing === true) ?
+    actions={[
+      {
+        title: 'Ajouter une pièce',
+        iconName: 'add',
+        show: 'never',
+        onPress: () => dispatch(actions.addDraftRoom()),
+      },
+    ].concat((editing === true) ?
     [
       {
         title: 'Terminer',
@@ -81,7 +101,7 @@ const RoomsNavbar = ({
         show: 'always',
         onPress: () => dispatch(actions.setEditRooms(true)),
       },
-    ]}
+    ])}
   />
 );
 
@@ -98,6 +118,7 @@ Rooms.renderNavigationBar = () => <ConnectedRoomsNavbar />;
 
 export default connect(createStructuredSelector({
   rooms: selectors.getRoomsArray,
+  currentRoom: selectors.getCurrentRoom,
   devices: selectors.getDevicesArray,
   editing: selectors.getEditing,
 }))(Rooms);

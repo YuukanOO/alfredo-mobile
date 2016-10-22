@@ -3,14 +3,15 @@ import { StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Statusbar from './Statusbar';
 
-const Navbar = ({ children, title, actions }) => (
+const Navbar = ({ children, title, actions, style, ...props }) => (
   <Icon.ToolbarAndroid
-    style={Navbar.styles.Container}
+    style={[Navbar.styles.Container, style]}
     title={title}
     titleColor="#ffffff"
     overflowIconName="more-vert"
     actions={actions}
     onActionSelected={idx => actions[idx].onPress()}
+    {...props}
   >
     {children}
   </Icon.ToolbarAndroid>
@@ -23,6 +24,7 @@ Navbar.propTypes = {
     PropTypes.element,
   ]),
   title: PropTypes.string,
+  style: PropTypes.any,
 };
 
 Navbar.height = 56;

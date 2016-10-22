@@ -3,10 +3,13 @@ import { MKTextField } from 'react-native-material-kit';
 import { Text, StyleSheet, Dimensions } from 'react-native';
 import base from './../../base';
 import * as actions from './../actions';
+import * as constants from './../constants';
+import Tile from './Tile';
 
 const { InnerView, types, colors } = base;
 
 const noDevicesDescription = 'Vous n\'avez aucun accessoire dans cette pièce pour le moment. Passez en mode édition pour en ajouter !';
+const mustSaveRoom = 'Vous devez donner un nom à la pièce avant de pouvoir ajouter des accessoires';
 
 const Room = ({
   room: {
@@ -24,13 +27,26 @@ const Room = ({
       underlineSize={0}
       textInputStyle={Room.styles.Name}
       value={name}
+      placeholder="Ma pièce"
+      placeholderTextColor={colors.disabledTextOnDarkColor}
       onChangeText={text => dispatch(actions.changeRoom(id, { name: text }))}
       onSubmitEditing={() => dispatch(actions.updateRoom.request(id))}
       editable={editing === true}
     />
     <Text style={Room.styles.SectionLabel}>Accessoires</Text>
-    {devices.length === 0 ?
+    {id === constants.DRAFT_ROOM_ID ?
+      <Text style={Room.styles.SectionText}>{mustSaveRoom}</Text>
+    :
+    (devices.length === 0 && !editing ?
       <Text style={Room.styles.SectionText}>{noDevicesDescription}</Text>
+    : null)
+    }
+    {editing && id !== constants.DRAFT_ROOM_ID ?
+      <Tile
+        text="Ajouter un accessoire"
+        icon="add"
+        onPress={() => dispatch(actions.goToAdaptersCategories())}
+      />
     : null}
   </InnerView>
 );

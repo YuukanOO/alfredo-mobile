@@ -84,6 +84,9 @@ function* onConnectToServer({ payload: { host } }) {
   }
 }
 
+/**
+ * When a room has been updated, create or update it on the server.
+ */
 function* onRoomUpdated() {
   try {
     const state = yield select();
@@ -105,11 +108,16 @@ function* onRoomUpdated() {
   }
 }
 
+export function* onGoToCategories() {
+  yield call(Actions[constants.CATEGORIES_SCENE_KEY]);
+}
+
 export default function* rootSaga() {
   yield [
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
     takeLatest(t.CONNECT_TO_SERVER.SUCCESS, onConnectedToServer),
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
     takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
+    takeLatest(t.GO_TO_ADAPTERS_CATEGORIES, onGoToCategories),
   ];
 }

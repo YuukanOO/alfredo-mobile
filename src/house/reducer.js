@@ -13,6 +13,7 @@ const initialState = {
   rooms: {},
   devices: {},
   adapters: {},
+  adaptersCategories: {},
 };
 
 export default function houseReducer(state = initialState, action) {
@@ -49,6 +50,18 @@ export default function houseReducer(state = initialState, action) {
       return {
         ...state,
         adapters: action.payload.reduce((prev, cur) => ({ ...prev, [cur.id]: cur }), {}),
+        adaptersCategories: action.payload.reduce((prev, cur) => {
+          const categoryName = cur.category;
+
+          if (!prev[categoryName]) {
+            /* eslint-disable no-param-reassign */
+            prev[categoryName] = [];
+          }
+
+          prev[categoryName].push(cur);
+
+          return prev;
+        }, {}),
       };
     case t.SET_CURRENT_ROOM:
       return { ...state, currentRoom: action.payload };
@@ -58,9 +71,10 @@ export default function houseReducer(state = initialState, action) {
       return {
         ...state,
         currentRoom: constants.DRAFT_ROOM_ID,
+        editing: true,
         rooms: {
           ...state.rooms,
-          [constants.DRAFT_ROOM_ID]: { id: constants.DRAFT_ROOM_ID, name: 'draft', editing: true },
+          [constants.DRAFT_ROOM_ID]: { id: constants.DRAFT_ROOM_ID },
         },
       };
     case t.CHANGE_ROOM:
