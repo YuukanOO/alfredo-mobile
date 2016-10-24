@@ -112,6 +112,10 @@ export function* onGoToCategories() {
   yield call(Actions[constants.CATEGORIES_SCENE_KEY]);
 }
 
+export function* onGoToAdapters() {
+  yield call(Actions[constants.ADAPTERS_SCENE_KEY]);
+}
+
 export default function* rootSaga() {
   yield [
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
@@ -119,5 +123,6 @@ export default function* rootSaga() {
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
     takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
     takeLatest(t.GO_TO_ADAPTERS_CATEGORIES, onGoToCategories),
+    takeLatest(t.GO_TO_ADAPTERS, onGoToAdapters),
   ];
 }

@@ -54,6 +54,11 @@ class App extends Component {
               component={house.Categories}
               {...sceneProps}
             />
+            <Scene
+              key={house.constants.ADAPTERS_SCENE_KEY}
+              component={house.Adapters}
+              {...sceneProps}
+            />
           </Scene>
         </RouterWithRedux>
       </View>

@@ -1,10 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { Actions } from 'react-native-router-flux';
 import base from './../../base';
+import * as selectors from './../selectors';
+import * as actions from './../actions';
 
-const { InnerView, Navbar, colors } = base;
+const { InnerView, List, ListItem, Navbar, colors } = base;
 
 class Categories extends Component {
   componentWillMount() {
@@ -20,15 +23,21 @@ class Categories extends Component {
   }
 
   render() {
+    const { categories, dispatch } = this.props;
+
     return (
       <InnerView>
-        
+        <List
+          dataSource={categories}
+          renderRow={o => <ListItem text={o} onPress={() => dispatch(actions.goToAdapters(o))} />}
+        />
       </InnerView>
     );
   }
 }
 
 Categories.propTypes = {
+  categories: PropTypes.array,
   dispatch: PropTypes.func.isRequired,
 };
 
@@ -40,11 +49,13 @@ Categories.styles = StyleSheet.create({
 
 Categories.renderNavigationBar = () => (
   <Navbar
-    title="Ajouter un accessoire"
+    title="Catégories"
     style={Categories.styles.Navbar}
     navIconName="arrow-back"
     onIconClicked={Actions.pop}
   />
 );
 
-export default connect()(Categories);
+export default connect(createStructuredSelector({
+  categories: selectors.getCategories,
+}))(Categories);

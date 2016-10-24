@@ -14,6 +14,7 @@ const initialState = {
   devices: {},
   adapters: {},
   adaptersCategories: {},
+  currentCategory: null,
 };
 
 export default function houseReducer(state = initialState, action) {
@@ -110,6 +111,8 @@ export default function houseReducer(state = initialState, action) {
           },
         },
       };
+    case t.GO_TO_ADAPTERS:
+      return { ...state, currentCategory: action.payload };
     default:
       return state;
   }

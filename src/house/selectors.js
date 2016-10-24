@@ -28,3 +28,14 @@ export const getCurrentRoom = createSelector(
     state => state[NAME].currentRoom,
     (rooms, currentRoom) => rooms[currentRoom] || {}
 );
+export const getRawCategories = state => state[NAME].adaptersCategories;
+export const getCategories = createSelector(
+  getRawCategories,
+  categories => Object.keys(categories)
+);
+export const getCurrentCategory = state => state[NAME].currentCategory;
+export const getCurrentAdapters = createSelector(
+  getCurrentCategory,
+  getRawCategories,
+  (currentCategory, categories) => categories[currentCategory] || []
+);
