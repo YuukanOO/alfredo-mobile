@@ -5,10 +5,10 @@ import base from './../../base';
 
 const { types, colors } = base;
 
-const Tile = ({ text, icon, detail, onPress }) => (
+const Tile = ({ text, icon, detail, onPress, iconColor, muted }) => (
   <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-    <View style={Tile.styles.Container}>
-      <Icon name={icon} style={Tile.styles.Icon} />
+    <View style={[Tile.styles.Container, muted ? Tile.styles.ContainerMuted : null]}>
+      <Icon name={icon} style={[Tile.styles.Icon, { color: iconColor }]} />
       <Text numberOfLines={2} style={Tile.styles.Text}>{text}</Text>
       <Text numberOfLines={1} style={Tile.styles.Detail}>{detail}</Text>
     </View>
@@ -18,8 +18,14 @@ const Tile = ({ text, icon, detail, onPress }) => (
 Tile.propTypes = {
   text: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired,
+  iconColor: PropTypes.string,
   detail: PropTypes.string,
+  muted: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
+};
+
+Tile.defaultProps = {
+  iconColor: colors.iconInactiveOnLightColor,
 };
 
 Tile.styles = StyleSheet.create({
@@ -33,6 +39,9 @@ Tile.styles = StyleSheet.create({
     marginBottom: 8,
     marginRight: 8,
   },
+  ContainerMuted: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
   Text: {
     color: colors.primaryTextOnLightColor,
     fontSize: types.captionBodySize,
@@ -44,7 +53,6 @@ Tile.styles = StyleSheet.create({
     fontSize: types.captionBodySize,
   },
   Icon: {
-    color: colors.iconInactiveOnLightColor,
     fontSize: 32,
   },
 });

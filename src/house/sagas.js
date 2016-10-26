@@ -171,7 +171,7 @@ function* onDeviceCommand({ payload: { device, cmd, args } }) {
  */
 function* onConnectToServer({ payload: { host } }) {
   try {
-    let server = selectors.getServerInfo(yield select());
+    const server = selectors.getServerInfo(yield select());
     let token = server.token;
 
     // If no token could be retrieved, generates a new one
@@ -183,12 +183,14 @@ function* onConnectToServer({ payload: { host } }) {
 
       // Sets the token and refresh the server object use to query subsequent resources
       yield put(actions.registerController.success(token));
-
-      server = selectors.getServerInfo(yield select());
     }
 
     const serverInfo = yield call(
-      base.fetch.get, ...server.request(),
+      base.fetch.get, host, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     yield put(actions.connectToServer.success(serverInfo));

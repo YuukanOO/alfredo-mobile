@@ -12,7 +12,7 @@ const description = 'Commencez par rentrer l\'adresse du serveur';
 
 const ServerTextField = field => (
   <MKTextField
-    placeholder="192.168.0.15:8080"
+    placeholder="http://192.168.0.15:8080"
     underlineColorAndroid="transparent"
     textInputStyle={OnboardingHome.styles.TextInput}
     highlightColor={colors.primaryColor}
