@@ -5,32 +5,44 @@ import { Actions } from 'react-native-router-flux';
 import base from './../../base';
 import Categories from './Categories';
 import * as selectors from './../selectors';
+import * as actions from './../actions';
 
 const { InnerView, Navbar, List, ListItem } = base;
 
-const Adapters = ({ currentAdapters }) => (
+const Adapters = ({ currentAdapters, dispatch }) => (
   <InnerView>
     <List
       dataSource={currentAdapters}
-      renderRow={o => <ListItem text={o.name} detail={o.description} />}
+      renderRow={o => (
+        <ListItem
+          text={o.name}
+          detail={o.description}
+          onPress={() => dispatch(actions.addDevice(o.id))}
+        />
+      )}
     />
   </InnerView>
 );
 
 Adapters.propTypes = {
   currentAdapters: PropTypes.array,
+  dispatch: PropTypes.func.isRequired,
 };
 
 Adapters.styles = Categories.styles;
 
-Adapters.renderNavigationBar = () => (
+const ConnectedNavbar = connect(createStructuredSelector({
+  currentCategory: selectors.getCurrentCategory,
+}))(({ currentCategory }) => (
   <Navbar
-    title="Adaptateurs"
-    style={Categories.styles.Navbar}
+    title={currentCategory}
+    style={Adapters.styles.Navbar}
     navIconName="arrow-back"
     onIconClicked={Actions.pop}
   />
-);
+));
+
+Adapters.renderNavigationBar = () => <ConnectedNavbar />;
 
 export default connect(createStructuredSelector({
   currentAdapters: selectors.getCurrentAdapters,

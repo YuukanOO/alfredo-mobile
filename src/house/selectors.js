@@ -39,3 +39,13 @@ export const getCurrentAdapters = createSelector(
   getRawCategories,
   (currentCategory, categories) => categories[currentCategory] || []
 );
+export const getCurrentAdapter = createSelector(
+  getAdapters,
+  state => state[NAME].currentAdapter,
+  (adapters, currentAdapter) => adapters[currentAdapter] || {}
+);
+export const getCurrentDevice = createSelector(
+  getDevices,
+  state => state[NAME].currentDevice,
+  (devices, currentDevice) => devices[currentDevice] || {}
+);

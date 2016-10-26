@@ -1,15 +1,18 @@
 import React, { PropTypes } from 'react';
 import { MKTextField } from 'react-native-material-kit';
-import { Text, StyleSheet, Dimensions } from 'react-native';
+import { Text, StyleSheet, Dimensions, View } from 'react-native';
 import base from './../../base';
 import * as actions from './../actions';
 import * as constants from './../constants';
+import * as widgets from './../widgets';
 import Tile from './Tile';
 
 const { InnerView, types, colors } = base;
 
 const noDevicesDescription = 'Vous n\'avez aucun accessoire dans cette pièce pour le moment. Passez en mode édition pour en ajouter !';
 const mustSaveRoom = 'Vous devez donner un nom à la pièce avant de pouvoir ajouter des accessoires';
+
+/* eslint-disable no-nested-ternary */
 
 const Room = ({
   room: {
@@ -35,19 +38,20 @@ const Room = ({
     />
     <Text style={Room.styles.SectionLabel}>Accessoires</Text>
     {id === constants.DRAFT_ROOM_ID ?
-      <Text style={Room.styles.SectionText}>{mustSaveRoom}</Text>
-    :
-    (devices.length === 0 && !editing ?
-      <Text style={Room.styles.SectionText}>{noDevicesDescription}</Text>
-    : null)
-    }
-    {editing && id !== constants.DRAFT_ROOM_ID ?
-      <Tile
-        text="Ajouter un accessoire"
-        icon="add"
-        onPress={() => dispatch(actions.goToAdaptersCategories())}
-      />
-    : null}
+      <Text style={Room.styles.SectionText}>{mustSaveRoom}</Text> : null}
+    {!editing && id !== constants.DRAFT_ROOM_ID && devices.length === 0 ?
+      <Text style={Room.styles.SectionText}>{noDevicesDescription}</Text> : null}
+
+    <View style={Room.styles.TileContainer}>
+      {devices.map(device => widgets.getWidget(device.adapter, 'tile', device, dispatch))}
+      {editing && id !== constants.DRAFT_ROOM_ID ?
+        <Tile
+          text="Ajouter un accessoire"
+          icon="add"
+          onPress={() => dispatch(actions.goToAdaptersCategories())}
+        />
+      : null}
+    </View>
   </InnerView>
 );
 
@@ -66,6 +70,12 @@ Room.styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
   },
+  TileContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
   Name: {
     color: colors.primaryTextOnDarkColor,
     fontSize: types.titleFontSize,
@@ -82,6 +92,7 @@ Room.styles = StyleSheet.create({
   SectionText: {
     color: colors.secondaryTextOnDarkColor,
     fontSize: types.bodyFontSize,
+    flexWrap: 'wrap',
   },
 });
 

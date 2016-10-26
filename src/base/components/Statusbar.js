@@ -6,7 +6,7 @@ import * as selectors from './../selectors';
 
 const Statusbar = ({
   state,
-}) => <StatusBar {...state} />;
+}) => <StatusBar animated {...state} />;
 
 Statusbar.propTypes = {
   state: PropTypes.shape({ ...StatusBar.propTypes }),

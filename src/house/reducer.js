@@ -13,8 +13,11 @@ const initialState = {
   rooms: {},
   devices: {},
   adapters: {},
+  widgets: {},
   adaptersCategories: {},
   currentCategory: null,
+  currentAdapter: null,
+  currentDevice: null,
 };
 
 export default function houseReducer(state = initialState, action) {
@@ -36,6 +39,8 @@ export default function houseReducer(state = initialState, action) {
           token: action.payload,
         },
       };
+    case t.WIDGETS_LOADED:
+      return { ...state, widgets: action.payload };
     case t.FETCH_ROOMS.SUCCESS:
       return {
         ...state,
@@ -113,6 +118,16 @@ export default function houseReducer(state = initialState, action) {
       };
     case t.GO_TO_ADAPTERS:
       return { ...state, currentCategory: action.payload };
+    case t.ADD_DEVICE:
+      return { ...state, currentAdapter: action.payload, currentDevice: null };
+    case t.REGISTER_DEVICE.SUCCESS:
+      return {
+        ...state,
+        devices: {
+          ...state.devices,
+          [action.payload.id]: action.payload,
+        },
+      };
     default:
       return state;
   }

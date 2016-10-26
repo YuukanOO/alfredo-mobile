@@ -6,6 +6,7 @@ import * as constants from './constants';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as t from './actionTypes';
+import * as widgets from './widgets';
 
 /**
  * Synchronize every aspect of the house: Rooms, Devices and Adapters.
@@ -16,6 +17,26 @@ function* sync() {
   try {
     const adapters = yield call(base.fetch.get, ...server.request('adapters'));
     yield put(actions.fetchAdapters.success(adapters));
+
+    let widgetsToEval = '(function({ React, Tile }) { return {';
+
+    // Now we must eval widgets
+    for (const adapter of adapters) {
+      for (const widget in adapter.widgets) {
+        const widgetName = `'${adapter.id}_${widget}'`;
+        let widgetObj = adapter.widgets[widget];
+
+        if (widgetObj.endsWith(';')) {
+          widgetObj = widgetObj.substring(0, widgetObj.length - 1);
+        }
+
+        widgetsToEval += `${widgetName}: ${widgetObj},`;
+      }
+    }
+
+    widgetsToEval += '};})';
+
+    widgets.parseWidgets(widgetsToEval);
 
     const rooms = yield call(base.fetch.get, ...server.request('rooms'));
     yield put(actions.fetchRooms.success(rooms));
@@ -49,6 +70,31 @@ function* onConnectedToServer() {
 
   yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
   yield put(base.actions.setStatusbar({ backgroundColor: 'transparent' }));
+}
+
+/**
+ * Try to register a device on the server.
+ */
+function* onRegisterDevice({ payload }) {
+  try {
+    const state = yield select();
+    const server = selectors.getServerInfo(state);
+    const room = selectors.getCurrentRoom(state);
+    const adapter = selectors.getCurrentAdapter(state);
+
+    const result = yield call(
+      base.fetch.post,
+      ...server.request('devices', {
+        ...payload,
+        room_id: room.id,
+        adapter: adapter.id,
+      }),
+    );
+
+    yield put(actions.registerDevice.success(result));
+  } catch (e) {
+    yield put(actions.registerDevice.failure(e));
+  }
 }
 
 /**
@@ -116,13 +162,25 @@ export function* onGoToAdapters() {
   yield call(Actions[constants.ADAPTERS_SCENE_KEY]);
 }
 
+export function* onGoToDevice() {
+  yield call(Actions[constants.DEVICE_SCENE_KEY]);
+}
+
+export function* onRegisteredDevice() {
+  yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
+}
+
 export default function* rootSaga() {
   yield [
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
     takeLatest(t.CONNECT_TO_SERVER.SUCCESS, onConnectedToServer),
+    takeLatest(t.REGISTER_DEVICE.REQUEST, onRegisterDevice),
+    takeLatest(t.REGISTER_DEVICE.SUCCESS, onRegisteredDevice),
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
     takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
     takeLatest(t.GO_TO_ADAPTERS_CATEGORIES, onGoToCategories),
     takeLatest(t.GO_TO_ADAPTERS, onGoToAdapters),
+    takeLatest(t.GO_TO_DEVICE, onGoToDevice),
+    takeLatest(t.ADD_DEVICE, onGoToDevice),
   ];
 }

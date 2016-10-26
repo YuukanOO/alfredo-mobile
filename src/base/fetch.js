@@ -7,15 +7,7 @@ const defaultOpts = {
 };
 
 function remote(endpoint, options = defaultOpts) {
-  /* global __DEV__ */
-  const logger = (json) => {
-    if (__DEV__) {
-      console.info('=>', options.method || defaultOpts.method, endpoint, options);
-      console.info('<=', json);
-    }
-    return json;
-  };
-
+  /* global __DEV__, fetch */
   return fetch(endpoint, {
     ...options,
     headers: {
@@ -23,7 +15,18 @@ function remote(endpoint, options = defaultOpts) {
       ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : null,
-  }).then(r => r.json()).then(logger); /* global fetch */
+  }).then(r => r.json().then((json) => {
+    if (__DEV__) {
+      console.info('=>', options.method || defaultOpts.method, endpoint, options);
+      console.info('<=', json);
+    }
+
+    if (!r.ok) {
+      throw json;
+    }
+
+    return json;
+  }));
 }
 
 export const get = (endpoint, data) => remote(endpoint, data);
