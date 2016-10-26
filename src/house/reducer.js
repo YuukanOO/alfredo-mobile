@@ -99,6 +99,12 @@ export default function houseReducer(state = initialState, action) {
           },
         },
       };
+    case t.DELETE_ROOM.SUCCESS:
+      return {
+        ...state,
+        currentRoom: _.last(Object.keys(_.omit(state.rooms, action.payload))),
+        rooms: _.omit(state.rooms, action.payload),
+      };
     case t.DRAFT_ROOM_SAVED:
       return {
         ...state,

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { View, StyleSheet, ViewPagerAndroid, Image } from 'react-native';
+import { View, StyleSheet, ViewPagerAndroid, Image, Alert } from 'react-native';
 import base from './../../base';
 import * as selectors from './../selectors';
 import * as actions from './../actions';
@@ -74,6 +74,7 @@ Rooms.styles = StyleSheet.create({
 });
 
 const RoomsNavbar = ({
+  currentRoom: { id },
   editing,
   dispatch,
 }) => (
@@ -84,6 +85,24 @@ const RoomsNavbar = ({
         iconName: 'add',
         show: 'never',
         onPress: () => dispatch(actions.addDraftRoom()),
+      },
+      {
+        title: 'Supprimer la pièce',
+        iconName: 'delete',
+        show: 'never',
+        onPress: () => Alert.alert(
+          'Supprimer',
+          'Etes vous-sûr de vouloir supprimer cette pièce ?',
+          [
+            {
+              text: 'Non',
+            },
+            {
+              text: 'Oui',
+              onPress: () => dispatch(actions.deleteRoom.request(id)),
+            },
+          ]
+        ),
       },
     ].concat((editing === true) ?
     [
@@ -107,11 +126,15 @@ const RoomsNavbar = ({
 
 RoomsNavbar.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  currentRoom: PropTypes.shape({
+    id: PropTypes.string,
+  }),
   editing: PropTypes.bool,
 };
 
 const ConnectedRoomsNavbar = connect(createStructuredSelector({
   editing: selectors.getEditing,
+  currentRoom: selectors.getCurrentRoom,
 }))(RoomsNavbar);
 
 Rooms.renderNavigationBar = () => <ConnectedRoomsNavbar />;

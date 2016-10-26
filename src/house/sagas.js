@@ -129,6 +129,24 @@ function* onDeleteDevice({ payload }) {
 }
 
 /**
+ * Deletes a room.
+ */
+function* onDeleteRoom({ payload }) {
+  try {
+    const server = selectors.getServerInfo(yield select());
+
+    yield call(
+      base.fetch.del,
+      ...server.request(`rooms/${payload}`)
+    );
+
+    yield put(actions.deleteRoom.success(payload));
+  } catch (e) {
+    yield put(actions.deleteRoom.failure(e));
+  }
+}
+
+/**
  * Called when a device command should be send to the server.
  */
 function* onDeviceCommand({ payload: { device, cmd, args } }) {
@@ -226,6 +244,7 @@ export default function* rootSaga() {
     takeLatest(t.UPSERT_DEVICE.REQUEST, onUpsertDevice),
     takeLatest(t.UPSERT_DEVICE.SUCCESS, onUpsertedDevice),
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
+    takeLatest(t.DELETE_ROOM.REQUEST, onDeleteRoom),
     takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
     takeLatest(t.GO_TO_ADAPTERS_CATEGORIES, onGoToCategories),
     takeLatest(t.GO_TO_ADAPTERS, onGoToAdapters),
