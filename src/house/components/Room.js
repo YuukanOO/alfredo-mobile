@@ -43,7 +43,7 @@ const Room = ({
       <Text style={Room.styles.SectionText}>{noDevicesDescription}</Text> : null}
 
     <View style={Room.styles.TileContainer}>
-      {devices.map(device => widgets.getWidget(device.adapter, 'tile', device, dispatch))}
+      {devices.map(device => widgets.getWidget(device.adapter, 'tile', device, dispatch, editing))}
       {editing && id !== constants.DRAFT_ROOM_ID ?
         <Tile
           text="Ajouter un accessoire"
@@ -73,7 +73,7 @@ Room.styles = StyleSheet.create({
   TileContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    marginRight: -8,
     alignItems: 'flex-start',
   },
   Name: {

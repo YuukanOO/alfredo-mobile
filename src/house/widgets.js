@@ -17,7 +17,7 @@ export function parseWidgets(widgetsStr) {
 /**
  * Retrieve a widget ready to be displayed for the given adapter and view.
  */
-export function getWidget(adapter, view, device, dispatch) {
+export function getWidget(adapter, view, device, dispatch, editing) {
   const adapterWidget = loadedWidgets[`${adapter}_${view}`];
 
   if (!adapterWidget) {
@@ -25,11 +25,15 @@ export function getWidget(adapter, view, device, dispatch) {
   }
 
   // This is the action that widgets can dispatch
-  const command = (cmd, args) => dispatch(actions.deviceCommand.request({
+  let command = (cmd, args) => dispatch(actions.deviceCommand.request({
     device: device.id,
     cmd,
     args,
   }));
+
+  if (editing) {
+    command = () => dispatch(actions.editDevice(device.id));
+  }
 
   return adapterWidget(device, command);
 }

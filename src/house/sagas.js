@@ -75,25 +75,74 @@ function* onConnectedToServer() {
 /**
  * Try to register a device on the server.
  */
-function* onRegisterDevice({ payload }) {
+function* onUpsertDevice({ payload }) {
   try {
     const state = yield select();
     const server = selectors.getServerInfo(state);
     const room = selectors.getCurrentRoom(state);
     const adapter = selectors.getCurrentAdapter(state);
+    const device = selectors.getCurrentDevice(state);
 
-    const result = yield call(
-      base.fetch.post,
-      ...server.request('devices', {
-        ...payload,
-        room_id: room.id,
-        adapter: adapter.id,
-      }),
+    let result = null;
+
+    if (device && device.id) {
+      result = yield call(
+        base.fetch.put,
+        ...server.request(`devices/${device.id}`, {
+          ...device,
+          ...payload,
+        })
+      );
+    } else {
+      result = yield call(
+        base.fetch.post,
+        ...server.request('devices', {
+          ...payload,
+          room_id: room.id,
+          adapter: adapter.id,
+        })
+      );
+    }
+
+    yield put(actions.upsertDevice.success(result));
+  } catch (e) {
+    yield put(actions.upsertDevice.failure(e));
+  }
+}
+
+/**
+ * Deletes a device.
+ */
+function* onDeleteDevice({ payload }) {
+  try {
+    const server = selectors.getServerInfo(yield select());
+
+    yield call(
+      base.fetch.del,
+      ...server.request(`devices/${payload}`)
     );
 
-    yield put(actions.registerDevice.success(result));
+    yield put(actions.deleteDevice.success(payload));
   } catch (e) {
-    yield put(actions.registerDevice.failure(e));
+    yield put(actions.deleteDevice.failure(e));
+  }
+}
+
+/**
+ * Called when a device command should be send to the server.
+ */
+function* onDeviceCommand({ payload: { device, cmd, args } }) {
+  try {
+    const server = selectors.getServerInfo(yield select());
+
+    const result = yield call(
+      base.fetch.put,
+      ...server.request(`devices/${device}/${cmd}`, args)
+    );
+
+    yield put(actions.deviceCommand.success(result));
+  } catch (e) {
+    yield put(actions.deviceCommand.failure(e));
   }
 }
 
@@ -166,7 +215,7 @@ export function* onGoToDevice() {
   yield call(Actions[constants.DEVICE_SCENE_KEY]);
 }
 
-export function* onRegisteredDevice() {
+export function* onUpsertedDevice() {
   yield call(Actions[constants.ROOMS_SCENE_KEY], { type: ActionConst.RESET });
 }
 
@@ -174,13 +223,16 @@ export default function* rootSaga() {
   yield [
     takeLatest(t.CONNECT_TO_SERVER.REQUEST, onConnectToServer),
     takeLatest(t.CONNECT_TO_SERVER.SUCCESS, onConnectedToServer),
-    takeLatest(t.REGISTER_DEVICE.REQUEST, onRegisterDevice),
-    takeLatest(t.REGISTER_DEVICE.SUCCESS, onRegisteredDevice),
+    takeLatest(t.UPSERT_DEVICE.REQUEST, onUpsertDevice),
+    takeLatest(t.UPSERT_DEVICE.SUCCESS, onUpsertedDevice),
     takeLatest(t.UPDATE_ROOM.REQUEST, onRoomUpdated),
     takeLatest(t.REGISTER_CONTROLLER.SUCCESS, onControllerRegistered),
     takeLatest(t.GO_TO_ADAPTERS_CATEGORIES, onGoToCategories),
     takeLatest(t.GO_TO_ADAPTERS, onGoToAdapters),
-    takeLatest(t.GO_TO_DEVICE, onGoToDevice),
+    takeLatest(t.EDIT_DEVICE, onGoToDevice),
     takeLatest(t.ADD_DEVICE, onGoToDevice),
+    takeLatest(t.DEVICE_COMMAND.REQUEST, onDeviceCommand),
+    takeLatest(t.DELETE_DEVICE.REQUEST, onDeleteDevice),
+    takeLatest(t.DELETE_DEVICE.SUCCESS, onUpsertedDevice),
   ];
 }

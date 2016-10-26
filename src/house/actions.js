@@ -21,10 +21,13 @@ export const setEditRooms = payload => ({ type: t.SET_EDIT_ROOMS, payload });
 export const registerController = base.actions.createActions(t.REGISTER_CONTROLLER);
 export const goToAdaptersCategories = () => ({ type: t.GO_TO_ADAPTERS_CATEGORIES });
 export const goToAdapters = payload => ({ type: t.GO_TO_ADAPTERS, payload });
-export const goToDevice = payload => ({ type: t.GO_TO_DEVICE, payload });
+export const editDevice = payload => ({ type: t.EDIT_DEVICE, payload });
 export const addDevice = payload => ({ type: t.ADD_DEVICE, payload });
-export const registerDevice = base.actions.createFormActions(
-  constants.DEVICE_FORM_NAME, t.REGISTER_DEVICE
+export const deleteDevice = base.actions.createFormActions(
+  constants.DEVICE_FORM_NAME, t.DELETE_DEVICE
+);
+export const upsertDevice = base.actions.createFormActions(
+  constants.DEVICE_FORM_NAME, t.UPSERT_DEVICE
 );
 export const widgetsLoaded = payload => ({ type: t.WIDGETS_LOADED, payload });
 export const deviceCommand = base.actions.createActions(t.DEVICE_COMMAND);

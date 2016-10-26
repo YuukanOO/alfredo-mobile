@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as t from './actionTypes';
 import * as constants from './constants';
 
@@ -72,7 +73,11 @@ export default function houseReducer(state = initialState, action) {
     case t.SET_CURRENT_ROOM:
       return { ...state, currentRoom: action.payload };
     case t.SET_EDIT_ROOMS:
-      return { ...state, editing: action.payload };
+      return {
+        ...state,
+        editing: action.payload,
+        rooms: action.payload ? state.rooms : _.omit(state.rooms, constants.DRAFT_ROOM_ID),
+      };
     case t.ADD_DRAFT_ROOM:
       return {
         ...state,
@@ -94,14 +99,12 @@ export default function houseReducer(state = initialState, action) {
           },
         },
       };
-    case t.DRAFT_ROOM_SAVED: // eslint-disable-line no-case-declarations
-      const oldRooms = state.rooms;
-      delete oldRooms[constants.DRAFT_ROOM_ID];
+    case t.DRAFT_ROOM_SAVED:
       return {
         ...state,
         currentRoom: action.payload.id,
         rooms: {
-          ...oldRooms,
+          ..._.omit(state.rooms, constants.DRAFT_ROOM_ID),
           [action.payload.id]: action.payload,
         },
       };
@@ -120,13 +123,24 @@ export default function houseReducer(state = initialState, action) {
       return { ...state, currentCategory: action.payload };
     case t.ADD_DEVICE:
       return { ...state, currentAdapter: action.payload, currentDevice: null };
-    case t.REGISTER_DEVICE.SUCCESS:
+    case t.EDIT_DEVICE:
+      return {
+        ...state,
+        currentDevice: action.payload,
+        currentAdapter: state.devices[action.payload].adapter,
+      };
+    case t.UPSERT_DEVICE.SUCCESS:
       return {
         ...state,
         devices: {
           ...state.devices,
           [action.payload.id]: action.payload,
         },
+      };
+    case t.DELETE_DEVICE.SUCCESS:
+      return {
+        ...state,
+        devices: _.omit(state.devices, action.payload),
       };
     default:
       return state;

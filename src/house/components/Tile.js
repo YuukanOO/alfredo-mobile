@@ -31,6 +31,7 @@ Tile.styles = StyleSheet.create({
     height: (Dimensions.get('window').width - 48) / 3,
     elevation: 4,
     marginBottom: 8,
+    marginRight: 8,
   },
   Text: {
     color: colors.primaryTextOnLightColor,

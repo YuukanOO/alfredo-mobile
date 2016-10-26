@@ -15,18 +15,24 @@ function remote(endpoint, options = defaultOpts) {
       ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : null,
-  }).then(r => r.json().then((json) => {
-    if (__DEV__) {
-      console.info('=>', options.method || defaultOpts.method, endpoint, options);
-      console.info('<=', json);
-    }
+  }).then((r) => {
+    return r.json().then((json) => {
+      if (__DEV__) {
+        console.info('=>', options.method || defaultOpts.method, endpoint, options);
+        console.info('<=', json);
+      }
 
-    if (!r.ok) {
-      throw json;
-    }
+      if (!r.ok) {
+        throw json;
+      }
 
-    return json;
-  }));
+      return json;
+    }).catch((err) => {
+      if (!r.ok) {
+        throw err;
+      }
+    });
+  });
 }
 
 export const get = (endpoint, data) => remote(endpoint, data);
