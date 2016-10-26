@@ -7,7 +7,6 @@ import { StyleSheet, View, Alert } from 'react-native';
 import { Field, reduxForm } from 'redux-form';
 import Categories from './Categories';
 import base from './../../base';
-import * as constants from './../constants';
 import * as actions from './../actions';
 import * as selectors from './../selectors';
 
@@ -35,9 +34,11 @@ class Device extends Component {
   }
 
   componentWillUnmount() {
-    this.props.dispatch(base.actions.setStatusbar({
-      backgroundColor: 'transparent',
-    }));
+    if (this.props.initialValues.id) {
+      this.props.dispatch(base.actions.setStatusbar({
+        backgroundColor: 'transparent',
+      }));
+    }
   }
 
   render() {
@@ -62,6 +63,7 @@ Device.propTypes = {
   }),
   dispatch: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
+  initialValues: PropTypes.any,
 };
 
 Device.styles = StyleSheet.create({

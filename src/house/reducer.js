@@ -76,6 +76,8 @@ export default function houseReducer(state = initialState, action) {
       return {
         ...state,
         editing: action.payload,
+        currentRoom: (!action.payload && state.currentRoom === constants.DRAFT_ROOM_ID) ?
+          _.last(Object.keys(_.omit(state.rooms, constants.DRAFT_ROOM_ID))) : state.currentRoom,
         rooms: action.payload ? state.rooms : _.omit(state.rooms, constants.DRAFT_ROOM_ID),
       };
     case t.ADD_DRAFT_ROOM:
