@@ -153,12 +153,12 @@ function* onDeviceCommand({ payload: { device, cmd, args } }) {
   try {
     const server = selectors.getServerInfo(yield select());
 
-    const result = yield call(
-      base.fetch.put,
+    const status = yield call(
+      base.fetch.post,
       ...server.request(`devices/${device}/${cmd}`, args)
     );
 
-    yield put(actions.deviceCommand.success(result));
+    yield put(actions.deviceCommand.success({ device, status }));
   } catch (e) {
     yield put(actions.deviceCommand.failure(e));
   }

@@ -23,6 +23,17 @@ const initialState = {
 
 export default function houseReducer(state = initialState, action) {
   switch (action.type) {
+    case t.DEVICE_COMMAND.SUCCESS:
+      return {
+        ...state,
+        devices: {
+          ...state.devices,
+          [action.payload.device]: {
+            ...state.devices[action.payload.device],
+            status: action.payload.status,
+          },
+        },
+      };
     case t.CONNECT_TO_SERVER.SUCCESS:
     case t.RESTORE_SERVER_INFO:
       return {
