@@ -5,8 +5,8 @@ import base from './../../base';
 
 const { types, colors } = base;
 
-const Tile = ({ text, icon, detail, onPress, iconColor, muted }) => (
-  <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+const Tile = ({ text, icon, detail, onPress, onLongPress, iconColor, muted }) => (
+  <TouchableOpacity onPress={onPress} activeOpacity={0.7} onLongPress={onLongPress}>
     <View style={[Tile.styles.Container, muted ? Tile.styles.ContainerMuted : null]}>
       <Icon name={icon} style={[Tile.styles.Icon, { color: iconColor }]} />
       <Text numberOfLines={2} style={Tile.styles.Text}>{text}</Text>
@@ -22,6 +22,7 @@ Tile.propTypes = {
   detail: PropTypes.string,
   muted: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
+  onLongPress: PropTypes.func,
 };
 
 Tile.defaultProps = {

@@ -22,3 +22,4 @@ export const UPSERT_DEVICE = base.actionTypes.createActionTypes(`${NAME}/UPSERT_
 export const DELETE_DEVICE = base.actionTypes.createActionTypes(`${NAME}/DELETE_DEVICE`);
 export const WIDGETS_LOADED = `${NAME}/WIDGETS_LOADED`;
 export const DEVICE_COMMAND = base.actionTypes.createActionTypes(`${NAME}/DEVICE_COMMAND`);
+export const SHOW_DEVICE_DETAIL_VIEW = `${NAME}/SHOW_DEVICE_DETAIL_VIEW`;

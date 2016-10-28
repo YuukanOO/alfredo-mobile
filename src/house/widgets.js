@@ -31,9 +31,11 @@ export function getWidget(adapter, view, device, dispatch, editing) {
     args,
   }));
 
+  const detail = () => dispatch(actions.showDetailView(device.id));
+
   if (editing) {
     command = () => dispatch(actions.editDevice(device.id));
   }
 
-  return adapterWidget(device, command);
+  return adapterWidget(device, command, detail);
 }
