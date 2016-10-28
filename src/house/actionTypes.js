@@ -23,3 +23,4 @@ export const DELETE_DEVICE = base.actionTypes.createActionTypes(`${NAME}/DELETE_
 export const WIDGETS_LOADED = `${NAME}/WIDGETS_LOADED`;
 export const DEVICE_COMMAND = base.actionTypes.createActionTypes(`${NAME}/DEVICE_COMMAND`);
 export const SHOW_DEVICE_DETAIL_VIEW = `${NAME}/SHOW_DEVICE_DETAIL_VIEW`;
+export const HIDE_DEVICE_DETAIL_VIEW = `${NAME}/HIDE_DEVICE_DETAIL_VIEW`;

@@ -19,10 +19,23 @@ const initialState = {
   currentCategory: null,
   currentAdapter: null,
   currentDevice: null,
+  modalVisible: false,
 };
 
 export default function houseReducer(state = initialState, action) {
   switch (action.type) {
+    case t.SHOW_DEVICE_DETAIL_VIEW:
+      return {
+        ...state,
+        currentDevice: action.payload,
+        modalVisible: true,
+      };
+    case t.HIDE_DEVICE_DETAIL_VIEW:
+      return {
+        ...state,
+        currentDevice: null,
+        modalVisible: false,
+      };
     case t.DEVICE_COMMAND.SUCCESS:
       return {
         ...state,

@@ -49,3 +49,4 @@ export const getCurrentDevice = createSelector(
   state => state[NAME].currentDevice,
   (devices, currentDevice) => devices[currentDevice] || {}
 );
+export const getModalVisible = state => state[NAME].modalVisible;

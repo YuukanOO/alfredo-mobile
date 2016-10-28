@@ -8,6 +8,7 @@ import onboarding from './onboarding';
 import house from './house';
 
 const { Statusbar } = base;
+const { DeviceModal } = house;
 const store = configureStore();
 
 // Additional scene props for each scene component.
@@ -26,6 +27,7 @@ class App extends Component {
     return (
       <View style={{ flex: 1 }}>
         <Statusbar />
+        <DeviceModal />
         <RouterWithRedux>
           <Scene key="root">
             <Scene
