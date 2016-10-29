@@ -32,5 +32,5 @@ export const upsertDevice = base.actions.createFormActions(
 );
 export const widgetsLoaded = payload => ({ type: t.WIDGETS_LOADED, payload });
 export const deviceCommand = base.actions.createActions(t.DEVICE_COMMAND);
-export const showDetailView = payload => ({ type: t.SHOW_DEVICE_DETAIL_VIEW, payload });
+export const showDeviceView = payload => ({ type: t.SHOW_DEVICE_VIEW, payload });
 export const hideDetailView = () => ({ type: t.HIDE_DEVICE_DETAIL_VIEW });

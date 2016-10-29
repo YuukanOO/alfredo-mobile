@@ -5,27 +5,29 @@ import { Modal, StyleSheet, ScrollView } from 'react-native';
 import base from './../../base';
 import * as selectors from './../selectors';
 import * as actions from './../actions';
+import * as widgets from './../widgets';
 
 const { Navbar, colors } = base;
 
 const DeviceModal = ({
-  device: { name },
-  modalVisible,
+  device,
+  modal: { visible, view },
   dispatch,
 }) => (
   <Modal
-    visible={modalVisible}
+    visible={visible}
     onRequestClose={() => dispatch(actions.hideDetailView())}
     animationType="fade"
   >
     <Navbar
       style={DeviceModal.styles.Navbar}
-      title={name}
+      title={device.name}
       titleColor={colors.primaryTextOnLightColor}
       navIconName="close"
       onIconClicked={() => dispatch(actions.hideDetailView())}
     />
-    <ScrollView>
+    <ScrollView style={DeviceModal.styles.View}>
+      {widgets.getWidget(device.adapter, view, device, dispatch, false)}
     </ScrollView>
   </Modal>
 );
@@ -33,9 +35,13 @@ const DeviceModal = ({
 DeviceModal.propTypes = {
   device: PropTypes.shape({
     name: PropTypes.string,
+    adapter: PropTypes.string,
   }),
   dispatch: PropTypes.func.isRequired,
-  modalVisible: PropTypes.bool,
+  modal: PropTypes.shape({
+    visible: PropTypes.bool,
+    view: PropTypes.string,
+  }),
 };
 
 DeviceModal.styles = StyleSheet.create({
@@ -44,9 +50,12 @@ DeviceModal.styles = StyleSheet.create({
     elevation: 4,
     top: 0,
   },
+  View: {
+    marginTop: Navbar.height,
+  },
 });
 
 export default connect(createStructuredSelector({
   device: selectors.getCurrentDevice,
-  modalVisible: selectors.getModalVisible,
+  modal: selectors.getModal,
 }))(DeviceModal);

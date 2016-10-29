@@ -18,7 +18,7 @@ function* sync() {
     const adapters = yield call(base.fetch.get, ...server.request('adapters'));
     yield put(actions.fetchAdapters.success(adapters));
 
-    let widgetsToEval = '(function({ React, Tile }) { return {';
+    let widgetsToEval = `(function(${widgets.WIDGET_API}) { return {`;
 
     // Now we must eval widgets
     for (const adapter of adapters) {

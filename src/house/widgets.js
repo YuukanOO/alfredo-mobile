@@ -1,8 +1,17 @@
 import React from 'react';
+import { View } from 'react-native';
 import Tile from './components/Tile';
+import base from './../base';
 import * as actions from './actions';
 
+const { RoundButton: Button } = base;
+
 let loadedWidgets = {};
+
+/**
+ * Widget available components.
+ */
+export const WIDGET_API = '{ React, Tile, Button, View }';
 
 /**
  * Load the given widgets.
@@ -12,6 +21,8 @@ export function parseWidgets(widgetsStr) {
   loadedWidgets = eval.call(this, widgetsStr)({
     React,
     Tile,
+    Button,
+    View,
   });
 }
 /**
@@ -31,11 +42,14 @@ export function getWidget(adapter, view, device, dispatch, editing) {
     args,
   }));
 
-  const detail = () => dispatch(actions.showDetailView(device.id));
+  const showView = viewName => dispatch(actions.showDeviceView({
+    device: device.id,
+    view: viewName,
+  }));
 
   if (editing) {
     command = () => dispatch(actions.editDevice(device.id));
   }
 
-  return adapterWidget(device, command, detail);
+  return adapterWidget(device, command, showView);
 }
